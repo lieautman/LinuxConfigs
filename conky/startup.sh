@@ -9,4 +9,4 @@ export DISPLAY=:0
 # Start conky in quiet mode
 conky -c ~/.config/conky/conkyHeader.conf -q
 conky -c ~/.config/conky/conkyCPU.conf -q
-#conky -c ~/.config/conky/conkyDetails.conf -q
+conky -c ~/.config/conky/conkyDetails.conf -q

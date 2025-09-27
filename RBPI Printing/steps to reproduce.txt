@@ -1,0 +1,12 @@
+1. download rpi-imager.
+2. on the sd, add octoprint, ssh, location,a username and pass withought using shift. (can add wifi)
+3. plug the cables into the rbpi
+4. ssh to the rbpi with the username and pass just created.
+5. install cups to the rbpi
+6. add config from backup to cups config
+7. add printer by cups to server
+8. add printer by local wizards to client
+9. test print
+
+
+

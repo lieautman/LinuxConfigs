@@ -101,8 +101,7 @@ function draw_labels(cr, pt)
     local labels = {
         {0.25, "25%"},
         {0.5,  "50%"},
-        {0.75, "75%"},
-        {1.0,  "100%"}
+        {0.75, "75%"}
     }
     local radius = pt.radius - 12  -- inside the ring
     local sa = pt.start_angle * (2 * math.pi / 360) - math.pi / 2
@@ -119,7 +118,7 @@ function draw_labels(cr, pt)
 end
 
 
-function draw_needle(cr, t, pt)
+function draw_needle_legacy(cr, t, pt)
     local xc, yc, radius = pt.x, pt.y, pt.radius
     local sa = pt.start_angle * (2 * math.pi / 360) - math.pi / 2
     local ea = pt.end_angle * (2 * math.pi / 360) - math.pi / 2
@@ -142,6 +141,32 @@ function draw_needle(cr, t, pt)
     cairo_close_path(cr)
 
     cairo_set_source_rgba(cr, 1.0, 0.2, 0.2, 0.8)  -- red translucent needle
+    cairo_fill(cr)
+end
+
+function draw_needle(cr, t, pt)
+    local xc, yc, radius = pt.x, pt.y, pt.radius
+    local sa = pt.start_angle * (2 * math.pi / 360) - math.pi / 2
+    local ea = pt.end_angle * (2 * math.pi / 360) - math.pi / 2
+    local angle = sa + (ea - sa) * t
+
+    local needle_length = radius - 6
+    local tip_x = xc + needle_length * math.cos(angle)
+    local tip_y = yc + needle_length * math.sin(angle)
+
+    local base_width = 8  -- increased from 4 to 8
+    local base_angle_offset = math.pi / 40  -- slightly wider angle for base
+    local left_x = xc + base_width * math.cos(angle - base_angle_offset)
+    local left_y = yc + base_width * math.sin(angle - base_angle_offset)
+    local right_x = xc + base_width * math.cos(angle + base_angle_offset)
+    local right_y = yc + base_width * math.sin(angle + base_angle_offset)
+
+    cairo_move_to(cr, left_x, left_y)
+    cairo_line_to(cr, tip_x, tip_y)
+    cairo_line_to(cr, right_x, right_y)
+    cairo_close_path(cr)
+
+    cairo_set_source_rgba(cr, 1.0, 1.0, 1.0, 1.0)  -- white, fully opaque needle
     cairo_fill(cr)
 end
 
@@ -181,7 +206,7 @@ function conky_ring_stats()
         draw_needle(cr, t, pt)
 
         local text_color = {0.4, 0.8, 1.0, 1.0}
-        draw_text_centered(cr, "Core " .. pt.arg:sub(4), pt.x, pt.y - pt.radius - 20, font_size_label, font_name, text_color)
+        draw_text_centered(cr, "Core " .. tonumber(pt.arg:sub(4)) + 1, pt.x, pt.y - pt.radius - 20, font_size_label, font_name, text_color)
         draw_text_centered(cr, string.format("%.0f%%", value), pt.x, pt.y + pt.radius + 10, font_size_load, font_name, text_color)
     end
 end
